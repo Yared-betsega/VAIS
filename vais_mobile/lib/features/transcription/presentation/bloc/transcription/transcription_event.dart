@@ -4,7 +4,7 @@ part of 'transcription_bloc.dart';
 sealed class TranscriptionEvent {}
 
 final class Transcribe extends TranscriptionEvent {
-  final String questionPath;
+  final File question;
 
-  Transcribe(this.questionPath);
+  Transcribe(this.question);
 }

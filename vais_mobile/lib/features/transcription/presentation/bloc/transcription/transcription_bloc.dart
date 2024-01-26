@@ -1,22 +1,35 @@
+import 'dart:io';
+
 import 'package:bloc/bloc.dart';
+import 'package:dartz/dartz.dart';
 import 'package:flutter/foundation.dart';
+import 'package:vais_mobile/features/transcription/domain/entities/answer.dart';
+import 'package:vais_mobile/features/transcription/domain/entities/question.dart';
+import 'package:vais_mobile/features/transcription/domain/usecases/question_usecase.dart';
+
+import '../../../../../core/errors/failures.dart';
 
 part 'transcription_event.dart';
 part 'transcription_state.dart';
 
 class TranscriptionBloc extends Bloc<TranscriptionEvent, TranscriptionState> {
-  TranscriptionBloc() : super(TranscriptionInitial()) {
-    on<Transcribe>((event, emit) {
+  final AskQuestionUseCase askQuestionUseCase;
+  TranscriptionBloc({required this.askQuestionUseCase})
+      : super(TranscriptionInitial()) {
+    on<Transcribe>((event, emit) async {
       emit(TranscriptionLoading());
 
-      Future.delayed(const Duration(seconds: 5), () {
-        // The code inside this block will be executed after the delay
-        if (kDebugMode) {
-          print('Action completed after 5 seconds');
-        }
-      });
+      await Future<dynamic>.delayed(const Duration(seconds: 2));
 
-      emit(TranscriptionSuccess(questionAsText: "This is the question."));
+      final Question question = Question(questionFile: event.question);
+      final Either<Failure, Answer> response =
+          await askQuestionUseCase(question);
+
+      response.fold(
+          (Failure failure) => emit(
+              TranscriptionFailure(message: "Cannot transcribe right now!")),
+          (Answer answer) =>
+              emit(TranscriptionSuccess(answerText: answer.answerText)));
     });
   }
 }

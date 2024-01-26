@@ -11,6 +11,7 @@ import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:path/path.dart' as path;
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:vais_mobile/features/transcription/presentation/bloc/transcription/transcription_bloc.dart';
 import 'package:vais_mobile/features/transcription/presentation/widgets/loading_indicator.dart';
 
 import '../widgets/action_button.dart';
@@ -133,6 +134,9 @@ class _TranscribePageState extends State<TranscribePage> {
                       if (isTimerRunning) {
                         stopTimer();
                       }
+                      File audioFile = File(filePath);
+                      BlocProvider.of<TranscriptionBloc>(context)
+                          .add(Transcribe(audioFile));
 
                       setState(() {
                         recordingState = RecordingState.idle;
@@ -144,7 +148,7 @@ class _TranscribePageState extends State<TranscribePage> {
                 playingState == PlayingState.playing
                     ? const ThreeBounceLoadingIndicator()
                     : ActionButton(
-                        text: "የቀዳኸውን ተጫወት",
+                        text: "የጠየክሁትን አሰማኝ",
                         icon: Icons.play_arrow,
                         iconColor: Colors.black,
                         f: () {

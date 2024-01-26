@@ -3,9 +3,11 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:vais_mobile/features/transcription/presentation/bloc/transcription/transcription_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vais_mobile/features/transcription/presentation/pages/transcribe.dart';
+import 'core/injection/injection_container.dart' as injection;
 
-void main() {
+void main() async {
   runApp(const MyApp());
+  await injection.init();
 }
 
 class MyApp extends StatelessWidget {
@@ -25,8 +27,7 @@ class MyApp extends StatelessWidget {
           home: MultiBlocProvider(
             providers: [
               BlocProvider<TranscriptionBloc>(
-                create: (context) => TranscriptionBloc(),
-              ),
+                  create: (context) => injection.sl<TranscriptionBloc>()),
             ],
             child: const MyHomePage(title: 'Flutter Demo Home Page'),
           ),
