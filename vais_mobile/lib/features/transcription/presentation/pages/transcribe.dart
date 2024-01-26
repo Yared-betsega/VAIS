@@ -17,6 +17,8 @@ import '../widgets/action_button.dart';
 
 enum RecordingState { idle, recording, speaking }
 
+enum PlayingState { idle, playing }
+
 class TranscribePage extends StatefulWidget {
   const TranscribePage({super.key, required this.title});
   final String title;
@@ -33,6 +35,7 @@ class _TranscribePageState extends State<TranscribePage> {
   late Timer timer;
   bool isTimerRunning = false;
   RecordingState recordingState = RecordingState.idle;
+  PlayingState playingState = PlayingState.idle;
 
   void startRecorder() async {
     filePath = '/sdcard/Download/temp.wav/';
@@ -138,13 +141,18 @@ class _TranscribePageState extends State<TranscribePage> {
                 const SizedBox(
                   height: 30,
                 ),
-                ActionButton(
-                    text: "የቀዳኸውን ተጫወት",
-                    icon: Icons.play_arrow,
-                    iconColor: Colors.black,
-                    f: () {
-                      startPlaying();
-                    }),
+                playingState == PlayingState.playing
+                    ? const ThreeBounceLoadingIndicator()
+                    : ActionButton(
+                        text: "የቀዳኸውን ተጫወት",
+                        icon: Icons.play_arrow,
+                        iconColor: Colors.black,
+                        f: () {
+                          startPlaying();
+                          setState(() {
+                            playingState = PlayingState.playing;
+                          });
+                        }),
                 const SizedBox(
                   height: 30,
                 ),
@@ -154,6 +162,9 @@ class _TranscribePageState extends State<TranscribePage> {
                     iconColor: Colors.black,
                     f: () {
                       stopPlaying();
+                      setState(() {
+                        playingState = PlayingState.idle;
+                      });
                     }),
               ],
             ),
