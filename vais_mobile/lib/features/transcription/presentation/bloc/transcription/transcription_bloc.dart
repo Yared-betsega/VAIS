@@ -26,8 +26,8 @@ class TranscriptionBloc extends Bloc<TranscriptionEvent, TranscriptionState> {
           await askQuestionUseCase(question);
 
       response.fold(
-          (Failure failure) => emit(
-              TranscriptionFailure(message: "Cannot transcribe right now!")),
+          (Failure failure) =>
+              emit(TranscriptionFailure(message: failure.message)),
           (Answer answer) =>
               emit(TranscriptionSuccess(answerText: answer.answerText)));
     });

@@ -12,9 +12,11 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:path/path.dart' as path;
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:vais_mobile/features/transcription/presentation/bloc/transcription/transcription_bloc.dart';
+import 'package:vais_mobile/features/transcription/presentation/pages/transcription_success_page.dart';
 import 'package:vais_mobile/features/transcription/presentation/widgets/loading_indicator.dart';
 
 import '../widgets/action_button.dart';
+import '../widgets/custom_snack_bar.dart';
 
 enum RecordingState { idle, recording, speaking }
 
@@ -39,7 +41,7 @@ class _TranscribePageState extends State<TranscribePage> {
   PlayingState playingState = PlayingState.idle;
 
   void startRecorder() async {
-    filePath = '/sdcard/Download/temp.wav/';
+    filePath = '/sdcard/Download/VAIS/temp.wav';
     _myRecorder = FlutterSoundRecorder();
     await _myRecorder.openRecorder();
 
@@ -91,89 +93,112 @@ class _TranscribePageState extends State<TranscribePage> {
         elevation: 0.0,
         title: const Center(child: Text('ቫይስ')),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              formattedTime,
-              style: TextStyle(fontSize: 35.sp),
-            ),
-            SizedBox(
-              height: 20.h,
-            ),
-            Column(
+      body: BlocConsumer<TranscriptionBloc, TranscriptionState>(
+        listener: (context, state) {
+          if (state is TranscriptionSuccess) {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => TranscriptionSuccessPage(
+                          questionAsText: state.answerText,
+                        )));
+          } else if (state is TranscriptionFailure) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: CustomSnackBarContent(errorText: state.message),
+                behavior: SnackBarBehavior.floating,
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+              ),
+            );
+          }
+        },
+        builder: (context, state) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                recordingState == RecordingState.recording
-                    ? const ThreeBounceLoadingIndicator()
-                    : ActionButton(
-                        text: "መጠየቅ ጀምር",
-                        icon: Icons.mic,
-                        iconColor: Colors.red,
-                        f: () {
-                          record();
-                          if (!isTimerRunning) {
-                            startTimer();
-                            setState(() {
-                              isTimerRunning = true;
-                            });
-                          }
-                          setState(() {
-                            recordingState = RecordingState.recording;
-                          });
-                        }),
-                const SizedBox(
-                  height: 30,
+                Text(
+                  formattedTime,
+                  style: TextStyle(fontSize: 35.sp),
                 ),
-                ActionButton(
-                    text: "መጠየቅ ጨርስ",
-                    icon: Icons.stop,
-                    iconColor: Colors.black,
-                    f: () {
-                      stopRecord();
-                      if (isTimerRunning) {
-                        stopTimer();
-                      }
-                      File audioFile = File(filePath);
-                      BlocProvider.of<TranscriptionBloc>(context)
-                          .add(Transcribe(audioFile));
-
-                      setState(() {
-                        recordingState = RecordingState.idle;
-                      });
-                    }),
-                const SizedBox(
-                  height: 30,
+                SizedBox(
+                  height: 20.h,
                 ),
-                playingState == PlayingState.playing
-                    ? const ThreeBounceLoadingIndicator()
-                    : ActionButton(
-                        text: "የጠየክሁትን አሰማኝ",
-                        icon: Icons.play_arrow,
+                Column(
+                  children: [
+                    recordingState == RecordingState.recording
+                        ? const ThreeBounceLoadingIndicator()
+                        : ActionButton(
+                            text: "መጠየቅ ጀምር",
+                            icon: Icons.mic,
+                            iconColor: Colors.red,
+                            f: () {
+                              record();
+                              if (!isTimerRunning) {
+                                startTimer();
+                                setState(() {
+                                  isTimerRunning = true;
+                                });
+                              }
+                              setState(() {
+                                recordingState = RecordingState.recording;
+                              });
+                            }),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    ActionButton(
+                        text: "መጠየቅ ጨርስ",
+                        icon: Icons.stop,
                         iconColor: Colors.black,
                         f: () {
-                          startPlaying();
+                          stopRecord();
+                          if (isTimerRunning) {
+                            stopTimer();
+                          }
+                          File audioFile = File(filePath);
+                          BlocProvider.of<TranscriptionBloc>(context)
+                              .add(Transcribe(audioFile));
+
                           setState(() {
-                            playingState = PlayingState.playing;
+                            recordingState = RecordingState.idle;
                           });
                         }),
-                const SizedBox(
-                  height: 30,
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    playingState == PlayingState.playing
+                        ? const ThreeBounceLoadingIndicator()
+                        : ActionButton(
+                            text: "የጠየክሁትን አሰማኝ",
+                            icon: Icons.play_arrow,
+                            iconColor: Colors.black,
+                            f: () {
+                              startPlaying();
+                              setState(() {
+                                playingState = PlayingState.playing;
+                              });
+                            }),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    ActionButton(
+                        text: "መጫወት አቁም",
+                        icon: Icons.stop,
+                        iconColor: Colors.black,
+                        f: () {
+                          stopPlaying();
+                          setState(() {
+                            playingState = PlayingState.idle;
+                          });
+                        }),
+                  ],
                 ),
-                ActionButton(
-                    text: "መጫወት አቁም",
-                    icon: Icons.stop,
-                    iconColor: Colors.black,
-                    f: () {
-                      stopPlaying();
-                      setState(() {
-                        playingState = PlayingState.idle;
-                      });
-                    }),
               ],
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
