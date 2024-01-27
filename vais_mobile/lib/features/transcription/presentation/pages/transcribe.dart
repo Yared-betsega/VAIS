@@ -148,23 +148,29 @@ class _TranscribePageState extends State<TranscribePage> {
                     const SizedBox(
                       height: 30,
                     ),
-                    ActionButton(
-                        text: "መጠየቅ ጨርስ",
-                        icon: Icons.stop,
-                        iconColor: Colors.black,
-                        f: () {
-                          stopRecord();
-                          if (isTimerRunning) {
-                            stopTimer();
-                          }
-                          File audioFile = File(filePath);
-                          BlocProvider.of<TranscriptionBloc>(context)
-                              .add(Transcribe(audioFile));
+                    BlocBuilder<TranscriptionBloc, TranscriptionState>(
+                      builder: (context, state) {
+                        return state is TranscriptionLoading
+                            ? const ThreeBounceLoadingIndicator()
+                            : ActionButton(
+                                text: "መጠየቅ ጨርስ",
+                                icon: Icons.stop,
+                                iconColor: Colors.black,
+                                f: () {
+                                  stopRecord();
+                                  if (isTimerRunning) {
+                                    stopTimer();
+                                  }
+                                  File audioFile = File(filePath);
+                                  BlocProvider.of<TranscriptionBloc>(context)
+                                      .add(Transcribe(audioFile));
 
-                          setState(() {
-                            recordingState = RecordingState.idle;
-                          });
-                        }),
+                                  setState(() {
+                                    recordingState = RecordingState.idle;
+                                  });
+                                });
+                      },
+                    ),
                     const SizedBox(
                       height: 30,
                     ),

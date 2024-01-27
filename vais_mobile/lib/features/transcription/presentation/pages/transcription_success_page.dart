@@ -14,10 +14,13 @@ class TranscriptionSuccessPage extends StatelessWidget {
         elevation: 0.0,
         title: const Center(child: Text('ቫይስ')),
       ),
-      body: Center(
-        child: Text(
-          questionAsText,
-          style: TextStyle(fontSize: 18.sp),
+      body: Padding(
+        padding: EdgeInsets.all(10.w),
+        child: Center(
+          child: Text(
+            questionAsText,
+            style: TextStyle(fontSize: 18.sp),
+          ),
         ),
       ),
     );
