@@ -1,10 +1,11 @@
+import 'dart:io';
+
 import 'package:vais_mobile/features/transcription/domain/entities/answer.dart';
 
 class AnswerModel extends Answer {
-  AnswerModel({required super.answerText});
+  AnswerModel({required super.answerAudio});
 
-  factory AnswerModel.fromJson(Map<String, dynamic> json) {
-    print("json $json");
-    return AnswerModel(answerText: json["text"]);
+  factory AnswerModel.fromJson(File answerAudio) {
+    return AnswerModel(answerAudio: answerAudio);
   }
 }

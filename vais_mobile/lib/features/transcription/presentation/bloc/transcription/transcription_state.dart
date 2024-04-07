@@ -8,9 +8,9 @@ final class TranscriptionInitial extends TranscriptionState {}
 final class TranscriptionLoading extends TranscriptionState {}
 
 final class TranscriptionSuccess extends TranscriptionState {
-  final String answerText;
+  final File answerAudio;
 
-  TranscriptionSuccess({required this.answerText});
+  TranscriptionSuccess({required this.answerAudio});
 }
 
 final class TranscriptionFailure extends TranscriptionState {

@@ -29,7 +29,7 @@ class TranscriptionBloc extends Bloc<TranscriptionEvent, TranscriptionState> {
           (Failure failure) =>
               emit(TranscriptionFailure(message: failure.message)),
           (Answer answer) =>
-              emit(TranscriptionSuccess(answerText: answer.answerText)));
+              emit(TranscriptionSuccess(answerAudio: answer.answerAudio)));
     });
   }
 }

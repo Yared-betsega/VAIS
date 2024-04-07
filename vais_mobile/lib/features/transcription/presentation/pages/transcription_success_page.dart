@@ -1,9 +1,37 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
-class TranscriptionSuccessPage extends StatelessWidget {
-  final String questionAsText;
-  const TranscriptionSuccessPage({super.key, required this.questionAsText});
+class TranscriptionSuccessPage extends StatefulWidget {
+  final File answerAudio;
+  
+  const TranscriptionSuccessPage({Key? key, required this.answerAudio}) : super(key: key);
+
+  @override
+  _TranscriptionSuccessPageState createState() => _TranscriptionSuccessPageState();
+}
+
+class _TranscriptionSuccessPageState extends State<TranscriptionSuccessPage> {
+  late AudioPlayer audioPlayer;
+
+  @override
+  void initState() {
+    super.initState();
+    audioPlayer = AudioPlayer();
+    playAudio();
+  }
+
+  @override
+  void dispose() {
+    audioPlayer.dispose();
+    super.dispose();
+  }
+
+  Future<void> playAudio() async {
+    await audioPlayer.play(DeviceFileSource(widget.answerAudio.path));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +46,7 @@ class TranscriptionSuccessPage extends StatelessWidget {
         padding: EdgeInsets.all(10.w),
         child: Center(
           child: Text(
-            questionAsText,
+            'Playing audio: ${widget.answerAudio.path}',
             style: TextStyle(fontSize: 18.sp),
           ),
         ),

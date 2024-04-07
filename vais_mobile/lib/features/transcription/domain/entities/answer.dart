@@ -1,5 +1,7 @@
-class Answer {
-  final String answerText;
+import 'dart:io';
 
-  const Answer({required this.answerText});
+class Answer {
+  final File answerAudio;
+
+  const Answer({required this.answerAudio});
 }

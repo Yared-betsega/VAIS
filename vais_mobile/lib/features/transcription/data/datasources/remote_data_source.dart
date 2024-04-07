@@ -12,7 +12,7 @@ abstract class QuestionRemoteDataSource {
 
 class QuestionRemoteDataSourceImpl implements QuestionRemoteDataSource {
   final http.Client client;
-  static const String baseUrl = 'http://192.168.0.172:8000/upload/';
+  static const String baseUrl = 'http://192.168.0.142:8000/upload/';
 
   QuestionRemoteDataSourceImpl({required this.client});
 
@@ -39,13 +39,22 @@ class QuestionRemoteDataSourceImpl implements QuestionRemoteDataSource {
 
       print("Reached here 5");
       var response = await request.send();
+      print(response.statusCode);
+      print(response);
+       if (response.statusCode == 200) {
+        final streamedResponse = response.stream;
+
+        final tempDir = await Directory.systemTemp.createTemp();
+        final file = File('/sdcard/Downloads/VAIS/temp.wav');
+
+        await file.writeAsBytes(await streamedResponse.toBytes());
+
+        print(file);
+        // Return AnswerModel with the audio file
+        return AnswerModel.fromJson(file);
+      }
       print("Reached here 6");
-      var decodedResponse = await response.stream.bytesToString();
-      var transcription = jsonDecode(decodedResponse);
-      // return transcription;
-      // var response = await request.send();
-      print("Reached here 5");
-      return AnswerModel.fromJson(transcription);
+      throw ServerException(response.toString());
     } catch (e) {
       print(e);
       throw ServerException("Server Failure");

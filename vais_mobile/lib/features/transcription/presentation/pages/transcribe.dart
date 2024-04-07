@@ -41,7 +41,8 @@ class _TranscribePageState extends State<TranscribePage> {
   PlayingState playingState = PlayingState.idle;
 
   void startRecorder() async {
-    filePath = '/sdcard/Download/VAIS/temp.wav';
+    final tempDir = await Directory.systemTemp.createTemp();
+    filePath = "${tempDir.path}/temp.wav";
     _myRecorder = FlutterSoundRecorder();
     await _myRecorder.openRecorder();
 
@@ -100,7 +101,7 @@ class _TranscribePageState extends State<TranscribePage> {
                 context,
                 MaterialPageRoute(
                     builder: (context) => TranscriptionSuccessPage(
-                          questionAsText: state.answerText,
+                          answerAudio: state.answerAudio,
                         )));
           } else if (state is TranscriptionFailure) {
             ScaffoldMessenger.of(context).showSnackBar(

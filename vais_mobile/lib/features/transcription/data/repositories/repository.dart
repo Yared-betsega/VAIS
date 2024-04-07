@@ -21,8 +21,8 @@ class QuestionRepositoryImpl implements QuestionRepository {
       final AnswerModel response =
           await questionDataSource.askQuestion(question);
       return Right<Failure, Answer>(response);
-    } on ServerException {
-      return const Left<Failure, Answer>(ServerFailure("Server Failure"));
+    } on ServerException catch (e){
+      return  Left<Failure, Answer>(ServerFailure(e.message));
     }
   }
 }
