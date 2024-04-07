@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:path/path.dart' as path;
+
 import 'package:vais_mobile/core/errors/exceptions.dart';
 import 'package:vais_mobile/features/transcription/data/models/answer_model.dart';
 
@@ -12,7 +14,8 @@ abstract class QuestionRemoteDataSource {
 
 class QuestionRemoteDataSourceImpl implements QuestionRemoteDataSource {
   final http.Client client;
-  static const String baseUrl = 'http://192.168.0.142:8000/upload/';
+  static const String baseUrl =
+      'https://9c5c-197-156-71-94.ngrok-free.app/upload/';
 
   QuestionRemoteDataSourceImpl({required this.client});
 
@@ -41,11 +44,17 @@ class QuestionRemoteDataSourceImpl implements QuestionRemoteDataSource {
       var response = await request.send();
       print(response.statusCode);
       print(response);
-       if (response.statusCode == 200) {
+      if (response.statusCode == 200) {
         final streamedResponse = response.stream;
 
         final tempDir = await Directory.systemTemp.createTemp();
-        final file = File('/sdcard/Downloads/VAIS/temp.wav');
+        Directory dir =
+            Directory(path.dirname("/sdcard/Download/VAIS/temp.wav"));
+        if (!dir.existsSync()) {
+          dir.createSync();
+        }
+
+        final file = File('/sdcard/Download/VAIS/temp.wav');
 
         await file.writeAsBytes(await streamedResponse.toBytes());
 

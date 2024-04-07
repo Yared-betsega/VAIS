@@ -1,26 +1,40 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:vais_mobile/features/transcription/presentation/pages/transcribe.dart';
+import 'package:vais_mobile/features/transcription/presentation/widgets/loading_indicator.dart';
 
 class TranscriptionSuccessPage extends StatefulWidget {
   final File answerAudio;
-  
-  const TranscriptionSuccessPage({Key? key, required this.answerAudio}) : super(key: key);
+
+  const TranscriptionSuccessPage({Key? key, required this.answerAudio})
+      : super(key: key);
 
   @override
-  _TranscriptionSuccessPageState createState() => _TranscriptionSuccessPageState();
+  _TranscriptionSuccessPageState createState() =>
+      _TranscriptionSuccessPageState();
 }
 
 class _TranscriptionSuccessPageState extends State<TranscriptionSuccessPage> {
   late AudioPlayer audioPlayer;
+  bool isPlaying = false;
 
   @override
   void initState() {
     super.initState();
     audioPlayer = AudioPlayer();
-    playAudio();
+    audioPlayer.onPlayerStateChanged.listen((state) {
+      if (state == PlayingState.playing) {
+        setState(() {
+          isPlaying = true;
+        });
+      } else {
+        setState(() {
+          isPlaying = false;
+        });
+      }
+    });
   }
 
   @override
@@ -31,6 +45,7 @@ class _TranscriptionSuccessPageState extends State<TranscriptionSuccessPage> {
 
   Future<void> playAudio() async {
     await audioPlayer.play(DeviceFileSource(widget.answerAudio.path));
+    ;
   }
 
   @override
@@ -45,9 +60,27 @@ class _TranscriptionSuccessPageState extends State<TranscriptionSuccessPage> {
       body: Padding(
         padding: EdgeInsets.all(10.w),
         child: Center(
-          child: Text(
-            'Playing audio: ${widget.answerAudio.path}',
-            style: TextStyle(fontSize: 18.sp),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  playAudio();
+                  setState(() {
+                    isPlaying = true;
+                  });
+                },
+                child: Text('መልስ'),
+              ),
+              SizedBox(height: 20),
+              if (isPlaying)
+                const ThreeBounceLoadingIndicator() // Loading widget
+              else
+                Text(
+                  'Audio file path: ${widget.answerAudio.path}',
+                  style: TextStyle(fontSize: 18.sp),
+                ),
+            ],
           ),
         ),
       ),
