@@ -88,9 +88,11 @@ class _TranscriptionSuccessPageState extends State<TranscriptionSuccessPage> {
                 onPressed: playPauseAudio,
                 icon: Icon(
                   isPlaying ? Icons.pause : Icons.play_arrow,
-                  size: 50,
+                  size: 80,
+                  color: Colors.green,
                 ),
               ),
+              const SizedBox(height: 20),
               if (duration != null && position != null)
                 Slider(
                   value: position!.inMilliseconds.toDouble(),
@@ -98,16 +100,24 @@ class _TranscriptionSuccessPageState extends State<TranscriptionSuccessPage> {
                   max: duration!.inMilliseconds.toDouble(),
                   onChanged: (double value) {
                     audioPlayer.seek(Duration(milliseconds: value.toInt()));
+                    setState(() {
+                      position = Duration(milliseconds: value.toInt());
+                    });
                   },
+                  activeColor: Colors.green,
+                  inactiveColor: Colors.grey[400],
                 ),
-              SizedBox(height: 20),
-              if (isPlaying || isPaused)
-                const ThreeBounceLoadingIndicator() // Loading widget
-              else
-                Text(
-                  'Audio file path: ${widget.answerAudio.path}',
-                  style: TextStyle(fontSize: 18.sp),
-                ),
+              const SizedBox(height: 20),
+              // if (isPlaying || isPaused)
+              //   const ThreeBounceLoadingIndicator() // Loading widget
+              // else
+              //   Text(
+              //     'Audio file path: ${widget.answerAudio.path}',
+              //     style: TextStyle(
+              //       fontSize: 16.sp,
+              //       color: Colors.black54,
+              //     ),
+              //   ),
             ],
           ),
         ),
