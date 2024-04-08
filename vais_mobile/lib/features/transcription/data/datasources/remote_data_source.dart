@@ -14,8 +14,7 @@ abstract class QuestionRemoteDataSource {
 
 class QuestionRemoteDataSourceImpl implements QuestionRemoteDataSource {
   final http.Client client;
-  static const String baseUrl =
-      'https://9c5c-197-156-71-94.ngrok-free.app/upload/';
+  static const String baseUrl = 'http://192.168.0.142:8000/upload/';
 
   QuestionRemoteDataSourceImpl({required this.client});
 

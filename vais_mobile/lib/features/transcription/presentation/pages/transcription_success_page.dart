@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -19,22 +20,39 @@ class TranscriptionSuccessPage extends StatefulWidget {
 class _TranscriptionSuccessPageState extends State<TranscriptionSuccessPage> {
   late AudioPlayer audioPlayer;
   bool isPlaying = false;
+  bool isPaused = false;
+  Duration? duration;
+  Duration? position;
 
   @override
   void initState() {
     super.initState();
     audioPlayer = AudioPlayer();
+    audioPlayer.onDurationChanged.listen((d) {
+      setState(() => duration = d);
+    });
+    audioPlayer.onPositionChanged.listen((p) {
+      setState(() => position = p);
+    });
     audioPlayer.onPlayerStateChanged.listen((state) {
-      if (state == PlayingState.playing) {
+      if (state == PlayerState.playing) {
         setState(() {
           isPlaying = true;
+          isPaused = false;
+        });
+      } else if (state == PlayerState.paused) {
+        setState(() {
+          isPlaying = false;
+          isPaused = true;
         });
       } else {
         setState(() {
           isPlaying = false;
+          isPaused = false;
         });
       }
     });
+    playPauseAudio(); // Start playing audio automatically
   }
 
   @override
@@ -43,9 +61,12 @@ class _TranscriptionSuccessPageState extends State<TranscriptionSuccessPage> {
     super.dispose();
   }
 
-  Future<void> playAudio() async {
-    await audioPlayer.play(DeviceFileSource(widget.answerAudio.path));
-    ;
+  Future<void> playPauseAudio() async {
+    if (isPlaying) {
+      await audioPlayer.pause();
+    } else {
+      await audioPlayer.play(DeviceFileSource(widget.answerAudio.path));
+    }
   }
 
   @override
@@ -63,17 +84,24 @@ class _TranscriptionSuccessPageState extends State<TranscriptionSuccessPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              ElevatedButton(
-                onPressed: () {
-                  playAudio();
-                  setState(() {
-                    isPlaying = true;
-                  });
-                },
-                child: Text('መልስ'),
+              IconButton(
+                onPressed: playPauseAudio,
+                icon: Icon(
+                  isPlaying ? Icons.pause : Icons.play_arrow,
+                  size: 50,
+                ),
               ),
+              if (duration != null && position != null)
+                Slider(
+                  value: position!.inMilliseconds.toDouble(),
+                  min: 0.0,
+                  max: duration!.inMilliseconds.toDouble(),
+                  onChanged: (double value) {
+                    audioPlayer.seek(Duration(milliseconds: value.toInt()));
+                  },
+                ),
               SizedBox(height: 20),
-              if (isPlaying)
+              if (isPlaying || isPaused)
                 const ThreeBounceLoadingIndicator() // Loading widget
               else
                 Text(
