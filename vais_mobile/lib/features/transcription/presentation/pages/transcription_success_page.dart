@@ -28,12 +28,8 @@ class _TranscriptionSuccessPageState extends State<TranscriptionSuccessPage> {
   void initState() {
     super.initState();
     audioPlayer = AudioPlayer();
-    audioPlayer.onDurationChanged.listen((d) {
-      setState(() => duration = d);
-    });
-    audioPlayer.onPositionChanged.listen((p) {
-      setState(() => position = p);
-    });
+    audioPlayer.onDurationChanged.listen((d) => setState(() => duration = d));
+    audioPlayer.onPositionChanged.listen((p) => setState(() => position = p));
     audioPlayer.onPlayerStateChanged.listen((state) {
       if (state == PlayerState.playing) {
         setState(() {
@@ -72,24 +68,38 @@ class _TranscriptionSuccessPageState extends State<TranscriptionSuccessPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 212, 233, 212),
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.green,
         elevation: 0.0,
-        title: const Center(child: Text('ቫይስ')),
+        title: const Center(
+          child: Text(
+            'ቫይስ',
+            style: TextStyle(
+                color: Colors.white), // White text for better contrast
+          ),
+        ),
       ),
       body: Padding(
-        padding: EdgeInsets.all(10.w),
+        padding: EdgeInsets.all(10.w), // Use ResponsiveSizer for padding
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              IconButton(
-                onPressed: playPauseAudio,
-                icon: Icon(
-                  isPlaying ? Icons.pause : Icons.play_arrow,
-                  size: 80,
-                  color: Colors.green,
+              Container(
+                // Container for the play button with some decoration
+                decoration: BoxDecoration(
+                  color: Colors.green[400],
+                  borderRadius: BorderRadius.circular(50.0),
+                ),
+                child: IconButton(
+                  onPressed: playPauseAudio,
+                  icon: Icon(
+                    isPlaying ? Icons.pause : Icons.play_arrow,
+                    size: 80,
+                    color: Colors.white,
+                  ),
                 ),
               ),
               const SizedBox(height: 20),

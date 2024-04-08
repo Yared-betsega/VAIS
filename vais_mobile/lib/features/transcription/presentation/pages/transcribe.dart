@@ -88,6 +88,7 @@ class _TranscribePageState extends State<TranscribePage> {
     String formattedTime = formatTime(seconds);
 
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 212, 233, 212),
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.green,
