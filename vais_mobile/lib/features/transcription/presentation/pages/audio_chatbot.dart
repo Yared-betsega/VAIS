@@ -11,7 +11,7 @@ import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:path/path.dart' as path;
 import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:vais_mobile/features/transcription/presentation/bloc/transcription/transcription_bloc.dart';
+import 'package:vais_mobile/features/transcription/presentation/bloc/question/transcription_bloc.dart';
 import 'package:vais_mobile/features/transcription/presentation/pages/transcription_success_page.dart';
 import 'package:vais_mobile/features/transcription/presentation/widgets/loading_indicator.dart';
 
@@ -22,14 +22,14 @@ enum RecordingState { idle, recording, speaking }
 
 enum PlayingState { idle, playing }
 
-class TranscribePage extends StatefulWidget {
-  const TranscribePage({super.key, required this.title});
+class AudioChatbotPage extends StatefulWidget {
+  const AudioChatbotPage({super.key, required this.title});
   final String title;
   @override
-  State<TranscribePage> createState() => _TranscribePageState();
+  State<AudioChatbotPage> createState() => _AudioChatbotPageState();
 }
 
-class _TranscribePageState extends State<TranscribePage> {
+class _AudioChatbotPageState extends State<AudioChatbotPage> {
   late FlutterSoundRecorder _myRecorder;
   final audioPlayer = AssetsAudioPlayer();
   late String filePath;
@@ -130,7 +130,9 @@ class _TranscribePageState extends State<TranscribePage> {
                 Column(
                   children: [
                     recordingState == RecordingState.recording
-                        ? const ThreeBounceLoadingIndicator()
+                        ? ThreeBounceLoadingIndicator(
+                            elevation: 10.0,
+                          )
                         : ActionButton(
                             text: "መጠየቅ ጀምር",
                             icon: Icons.mic,
@@ -153,7 +155,9 @@ class _TranscribePageState extends State<TranscribePage> {
                     BlocBuilder<TranscriptionBloc, TranscriptionState>(
                       builder: (context, state) {
                         return state is TranscriptionLoading
-                            ? const ThreeBounceLoadingIndicator()
+                            ? ThreeBounceLoadingIndicator(
+                                elevation: 10.0,
+                              )
                             : ActionButton(
                                 text: "መጠየቅ ጨርስ",
                                 icon: Icons.stop,
@@ -165,7 +169,7 @@ class _TranscribePageState extends State<TranscribePage> {
                                   }
                                   File audioFile = File(filePath);
                                   BlocProvider.of<TranscriptionBloc>(context)
-                                      .add(Transcribe(audioFile));
+                                      .add(AskAudioQuestion(audioFile));
 
                                   setState(() {
                                     recordingState = RecordingState.idle;
@@ -177,7 +181,9 @@ class _TranscribePageState extends State<TranscribePage> {
                       height: 30,
                     ),
                     playingState == PlayingState.playing
-                        ? const ThreeBounceLoadingIndicator()
+                        ? ThreeBounceLoadingIndicator(
+                            elevation: 10.0,
+                          )
                         : ActionButton(
                             text: "የጠየክሁትን አሰማኝ",
                             icon: Icons.play_arrow,
@@ -254,6 +260,12 @@ class _TranscribePageState extends State<TranscribePage> {
       autoStart: true,
       showNotification: true,
     );
+
+    audioPlayer.playlistAudioFinished.listen((Playing playing) {
+      setState(() {
+        playingState = PlayingState.idle;
+      });
+    });
   }
 
   Future<void> stopPlaying() async {

@@ -25,7 +25,7 @@ class CustomSnackBarContent extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      "Oh snap",
+                      "ማሳወቂያ",
                       style: TextStyle(fontSize: 18, color: Colors.white),
                     ),
                     Text(

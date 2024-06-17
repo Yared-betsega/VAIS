@@ -3,7 +3,8 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class ThreeBounceLoadingIndicator extends StatelessWidget {
-  const ThreeBounceLoadingIndicator({super.key});
+  double elevation;
+  ThreeBounceLoadingIndicator({super.key, required this.elevation});
 
   @override
   Widget build(BuildContext context) {
@@ -11,11 +12,12 @@ class ThreeBounceLoadingIndicator extends StatelessWidget {
       width: 80.w,
       height: 7.h,
       child: Material(
-          elevation: 10.0,
+          elevation: elevation,
           child: Container(
             padding: const EdgeInsets.all(5),
             decoration: const BoxDecoration(
-                color: Colors.white, shape: BoxShape.rectangle),
+                color: const Color.fromARGB(255, 212, 233, 212),
+                shape: BoxShape.rectangle),
             child: const SpinKitThreeBounce(
               color: Colors.green,
               size: 50.0,

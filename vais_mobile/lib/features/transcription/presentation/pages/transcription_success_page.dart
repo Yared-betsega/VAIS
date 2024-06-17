@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:vais_mobile/features/transcription/presentation/pages/transcribe.dart';
+import 'package:vais_mobile/features/transcription/presentation/pages/audio_chatbot.dart';
 import 'package:vais_mobile/features/transcription/presentation/widgets/loading_indicator.dart';
 
 class TranscriptionSuccessPage extends StatefulWidget {

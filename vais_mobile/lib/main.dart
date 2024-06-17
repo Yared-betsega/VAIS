@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:vais_mobile/features/transcription/presentation/bloc/transcription/transcription_bloc.dart';
+import 'package:vais_mobile/features/transcription/presentation/bloc/question/transcription_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:vais_mobile/features/transcription/presentation/pages/transcribe.dart';
+import 'package:vais_mobile/features/transcription/presentation/pages/audio_chatbot.dart';
+import 'package:vais_mobile/features/transcription/presentation/pages/chatbot.dart';
 import 'core/injection/injection_container.dart' as injection;
 
 void main() async {
@@ -19,6 +20,7 @@ class MyApp extends StatelessWidget {
     return ResponsiveSizer(
       builder: (context, orientation, screentype) {
         return MaterialApp(
+          debugShowCheckedModeBanner: false,
           title: 'Flutter Demo',
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
@@ -49,8 +51,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return const TranscribePage(
-      title: "VAIS",
-    );
+    return const ChatbotPage();
   }
 }
